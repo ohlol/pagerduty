@@ -38,10 +38,9 @@ func SetupAccount(subdomain string, apiKey string) (account Account) {
 	return
 }
 
-func (account *Account) Incidents(params map[string]string) (incidents []Incident) {
+func (account *Account) Incidents(params map[string]string) (incidents []Incident, err error) {
 	var (
 		buf  []byte
-		err  error
 		req  *http.Request
 		resp *http.Response
 	)
