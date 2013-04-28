@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 type Account struct {
@@ -37,7 +38,7 @@ func SetupAccount(subdomain string, apiKey string) (account Account) {
 	return
 }
 
-func (account *Account) Incidents(params map[string][]string) (incidents []Incident) {
+func (account *Account) Incidents(params map[string]string) (incidents []Incident) {
 	var (
 		buf  []byte
 		err  error
@@ -47,11 +48,17 @@ func (account *Account) Incidents(params map[string][]string) (incidents []Incid
 
 	endpoint := "api/v1/incidents"
 
+	if len(params) > 0 {
+		values := url.Values{}
+		for k, v := range params {
+			values.Set(k, v)
+		}
+		endpoint = fmt.Sprintf("%s?%s", endpoint, values.Encode())
+	}
+
 	if req, err = account.getRequest(endpoint); err != nil {
 		return
 	}
-
-	req.Form = params
 
 	if resp, err = http.DefaultClient.Do(req); err != nil {
 		return
