@@ -1,4 +1,4 @@
-package main
+package pagerduty
 
 import (
 	"encoding/json"
