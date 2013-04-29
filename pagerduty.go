@@ -1,3 +1,22 @@
+/*
+ Package pagerduty is meant to be a full implementation of the PagerDuty API as documented at
+ http://developer.pagerduty.com/
+
+ Pagination is currently not supported, but planned for the near future.
+
+ // Set up the PagerDuty account to use
+ subdomain := "my_company"
+ apiKey := "my_api_key"
+
+ account := pagerduty.SetupAccount(subdomain, apiKey)
+
+ // Filter and fetch incidents
+ filter := map[string]string {
+         "status": "acknowledged,triggered",
+ }
+
+ incidents, err := account.Incidents(filter)
+*/
 package pagerduty
 
 import (
@@ -8,11 +27,13 @@ import (
 	"net/url"
 )
 
+// PagerDuty Account
 type Account struct {
 	apiKey string
 	url    string
 }
 
+// Incident
 type Incident struct {
 	AssignedToUser        map[string]interface{} `json:"assigned_to_user"`
 	CreatedOn             string                 `json:"created_on"`
@@ -26,6 +47,7 @@ type Incident struct {
 	TriggerSummaryData    map[string]interface{} `json:"trigger_summary_data"`
 }
 
+// The response object from `GET /api/v1/incidents`
 type IncidentsResponse struct {
 	Incidents []Incident
 	Limit     int
@@ -33,11 +55,7 @@ type IncidentsResponse struct {
 	Total     int
 }
 
-func SetupAccount(subdomain string, apiKey string) (account Account) {
-	account = Account{apiKey: apiKey, url: fmt.Sprintf("https://%s.pagerduty.com", subdomain)}
-	return
-}
-
+// Incidents fetches all incidents from PagerDuty with the specified filters.
 func (account *Account) Incidents(params map[string]string) (incidents []Incident, err error) {
 	var (
 		buf  []byte
@@ -87,5 +105,11 @@ func (account *Account) getRequest(endpoint string) (req *http.Request, err erro
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Token token=%s", account.apiKey))
 
+	return
+}
+
+// SetupAccount builds the Account struct
+func SetupAccount(subdomain string, apiKey string) (account Account) {
+	account = Account{apiKey: apiKey, url: fmt.Sprintf("https://%s.pagerduty.com", subdomain)}
 	return
 }
