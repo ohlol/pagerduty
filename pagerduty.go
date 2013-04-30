@@ -4,18 +4,18 @@
 
  Pagination is currently not supported, but planned for the near future.
 
- // Set up the PagerDuty account to use
- subdomain := "my_company"
- apiKey := "my_api_key"
+         // Set up the PagerDuty account to use
+         subdomain := "my_company"
+         apiKey := "my_api_key"
 
- account := pagerduty.SetupAccount(subdomain, apiKey)
+         account := pagerduty.SetupAccount(subdomain, apiKey)
 
- // Filter and fetch incidents
- filter := map[string]string {
-         "status": "acknowledged,triggered",
- }
+         // Filter and fetch incidents
+         filter := map[string]string {
+                 "status": "acknowledged,triggered",
+         }
 
- incidents, err := account.Incidents(filter)
+         incidents, err := account.Incidents(filter)
 */
 package pagerduty
 
