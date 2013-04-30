@@ -27,8 +27,8 @@ import (
 	"net/url"
 )
 
-// PagerDuty Account
-type Account struct {
+// PagerDuty account
+type account struct {
 	apiKey string
 	url    string
 }
@@ -56,7 +56,7 @@ type IncidentsResponse struct {
 }
 
 // Incidents fetches all incidents from PagerDuty with the specified filters.
-func (account *Account) Incidents(params map[string]string) (incidents []Incident, err error) {
+func (acct *account) Incidents(params map[string]string) (incidents []Incident, err error) {
 	var (
 		buf  []byte
 		req  *http.Request
@@ -73,7 +73,7 @@ func (account *Account) Incidents(params map[string]string) (incidents []Inciden
 		endpoint = fmt.Sprintf("%s?%s", endpoint, values.Encode())
 	}
 
-	if req, err = account.getRequest(endpoint); err != nil {
+	if req, err = acct.getRequest(endpoint); err != nil {
 		return
 	}
 
@@ -97,19 +97,19 @@ func (account *Account) Incidents(params map[string]string) (incidents []Inciden
 	return
 }
 
-func (account *Account) getRequest(endpoint string) (req *http.Request, err error) {
-	if req, err = http.NewRequest("GET", fmt.Sprintf("%s/%s", account.url, endpoint), nil); err != nil {
+func (acct *account) getRequest(endpoint string) (req *http.Request, err error) {
+	if req, err = http.NewRequest("GET", fmt.Sprintf("%s/%s", acct.url, endpoint), nil); err != nil {
 		return
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Token token=%s", account.apiKey))
+	req.Header.Add("Authorization", fmt.Sprintf("Token token=%s", acct.apiKey))
 
 	return
 }
 
 // SetupAccount builds the Account struct
-func SetupAccount(subdomain string, apiKey string) (account Account) {
-	account = Account{apiKey: apiKey, url: fmt.Sprintf("https://%s.pagerduty.com", subdomain)}
+func SetupAccount(subdomain string, apiKey string) (acct account) {
+	acct = account{apiKey: apiKey, url: fmt.Sprintf("https://%s.pagerduty.com", subdomain)}
 	return
 }
